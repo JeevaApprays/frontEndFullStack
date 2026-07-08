@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>rough</title>
+
+    <style>
+        .navbar{
+            background-color: #111;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0px 5px;
+        }
+        .panel{
+            background-color: #eadede;
+            max-width: 960px;
+            padding: 20px;
+            margin: 5px;
+            border-radius: 5px;
+            display: none;
+        }
+        .active{
+            display: block;
+        }
+    </style>
+
+    
+</head>
+<body>
+    
+
+    <div class="navbar">
+        <h2>Dashboard</h2>
+        <button onclick="logout()">Logout</button>
+    </div>
+
+    <div class="container">
+        <div>
+            <h2>Trainer Operation</h2>
+        </div>
+        <div class="option">
+            <button class="btn" onclick="showpanel('add')">Add Trainer</button>
+            <button class="btn" onclick="showpanel('getall')">Get All Trainers</button>
+            <button class="btn" onclick="showpanel('get')">Get Trainer</button>
+            <button class="btn" onclick="showpanel('update')">Update Trainer</button>
+            <button class="btn" onclick="showpanel('delete')">Delete Trainer</button>
+        </div>
+    </div>
+
+    <div class="panel" id="add">
+        <h3>Add Trainer</h3>
+        <label for="trainername">Trainer Name</label> <input type="text" name="trainername" id="aname" required><br>
+        <label for="trainername">Trainer Email</label> <input type="email" name="trainername" id="aemail" required><br>
+        <div id="msg"></div>
+        <button onclick="addTrainer()">Add Trainer</button>
+    </div>
+    <div class="panel" id="getall">
+                <h3>Get All Trainers</h3>
+                <div id="trainerList"></div>
+                <button onclick="fetchAllTrainers()">Fetch All Trainers</button>
+    </div>
+    <div class="panel" id="get">
+            <h3>Get Trainer</h3>
+    </div>
+    <div class="panel" id="update" >
+            <h3>Update Trainer</h3>
+    </div>
+    <div class="panel" id="delete">
+            <h3>Delete Trainer</h3>
+    </div>
+
+
+
+    <script>
+         const API_BASE = 'http://localhost:8080';
+
+        const logout = () => {
+            localStorage.clear();
+            window.location.href = 'login.html';
+        }
+
+        const token = localStorage.getItem('jwt_token');
+
+    function buildTable(trainers) {
+      if (!trainers || trainers.length === 0) return '<em>No trainers found.</em>';
+      let rows = trainers.map(t => `
+        <tr>
+          <td>${t.id}</td>
+          <td>${t.name}</td>
+          <td>${t.email}</td>
+          <td>${t.createdAt ? t.createdAt.replace('T', ' ').substring(0, 19) : '—'}</td>
+        </tr>`).join('');
+      return `<table border=2>
+        <thead><tr><th>ID</th><th>Name</th><th>Email</th><th>Created At</th></tr></thead>
+        <tbody>${rows}</tbody>
+      </table>`;
+    }
+        async function fetchAllTrainers() {
+            try {
+                const res = await fetch(API_BASE + "/admin/fetchAllTrainers", {
+                    headers: {
+                        Authorization: "Bearer " + token
+                    }
+                });
+
+                if (!res.ok) {
+                    alert("Invalid request ! ");
+                }
+
+                const data = await res.json();
+
+                document.getElementById("trainerList").innerHTML = buildTable(data);
+
+            } catch (err) {
+                document.getElementById("msg").textContent =
+                    "Cannot connect to server. Make sure backend is running on port 8080.";
+            }
+        }
+        
+        async function addTrainer(){
+            const name = document.getElementById('aname').value.trim();
+            const email = document.getElementById('aemail').value;
+
+            if(!name || !email){
+                alert("Invalid Name or Email !");
+                return;
+            }
+
+          try{  
+                const res = await fetch(API_BASE + "/addTrainer",{
+                method : 'POST',
+                headers : {'Content-type':'application/json','Authorization' : 'Bearer '+token},
+                body : JSON.stringify({name : name , email : email})
+            });
+
+            if(!res.ok){
+                throw new status(res.status);
+            }
+            
+            document.getElementById('msg').textContent = 'Trainer added Successfully !!';
+
+        }catch(err){
+             document.getElementById('msg').textContent = 'Cannot connect to server. Make sure backend is running on port 8080.';
+        }
+
+        }
+
+        function showpanel(id){
+            document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+        }
+    </script>
+</body>
+</html>

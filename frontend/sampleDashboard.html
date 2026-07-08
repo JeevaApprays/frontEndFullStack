@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+<style>
+    .navBar{
+        background-color: black;
+        color: white;
+        display: flex;
+        justify-content: space-between;
+        align-content: center;
+        padding: 0% 5px;
+    }
+    .container{
+        background-color: azure;
+        color: brown;
+        padding: 2px;
+        margin-top: 2px;
+    }
+    .btnOption{
+        display: flex;
+    }
+    .option{
+        background-color: beige;
+        color: black;
+        padding: 5px;
+        margin-top: 5px; 
+        display: none;
+    }
+    .active{
+        display: block;
+    }
+
+</style>
+
+
+</head>
+<body>
+
+    <div class="navBar">
+            <h3>Dashboard</h3>
+            <button onclick="logout()">logout</button>
+    </div>
+
+    <div class="container">
+        <div>
+            <h4>Trainer Operations</h4>
+        </div>
+        <div class="btnOption">
+            <button class="active" onclick="mthodtoClick('add')">Add Trainer</button>
+            <button class="active" onclick="mthodtoClick('getAll')">Get All Trainer</button>
+            <button class="active" onclick="mthodtoClick('get')">Get Trainer By ID</button>
+            <button class="active" onclick="mthodtoClick('update')">Update Trainer</button>
+            <button class="active" onclick="mthodtoClick('delete')">Delete Trainer</button>
+        </div>
+    </div>
+
+    <div class ="option" id="add">
+        <p>Add Trainer</p>
+        <label>User Name</label><br>
+        <input type="text" id="userName" required/><br>
+        <label>Email ID</label><br>
+        <input type="email" id="emailid" required/><br><br>
+        <div id="dataViewdiv"></div>
+        <button onclick="addTrainer()">add Trainer</button>
+
+    </div>
+
+    <div class ="option" id="getAll">
+        <p>View All Trainer Details</p><br>
+        <button onclick="getAllTrainer()">fetch Data</button>
+    </div>
+
+        <div class ="option" id="get">
+        <p>Get Trainer Detail</p>
+    </div>
+
+        <div class ="option" id="update">
+        <p>Update Trainer</p>
+    </div>
+ <div class ="option" id="delete">
+        <p>Delete Trainer</p>
+    </div>
+    
+
+
+    <script>
+
+        const BASEURL ='http://localhost:8080';
+
+
+                const token = localStorage.getItem('jwt_token');
+
+      async  function addTrainer(){    // arrow function
+
+            const name =document.getElementById('userName').value.trim();
+            const email = document.getElementById('emailid').value;
+
+            if(!name || !email){
+                alert("Name and Email must given any value");
+                return;
+            }
+            try{
+                const res = await fetch(BASEURL+'/addTrainer',{
+                    method:'POST',
+                    headers:{'Content-type':'application/json','Authorization':'Bearer '+token},
+                    body: JSON.stringify({name:name,email:email})
+                });
+            
+            if(!res.ok){
+                alert("Data is not Stored");
+                throw new status(res.status);
+            }
+            
+            document.getElementById('dataViewdiv').textContent='Trainer Added Sucessfully';
+        }catch(err){
+            document.getElementById('dataViewdiv').textContent='Cannot Add Trainer Details';
+        }
+        }
+
+
+        async function getAllTrainer(){
+            try{
+            const res = await fetch(BASEURL+'/admin/fetchAllTrainers',{
+                headers{'Authorization':'Bearer '+token},
+                
+
+            }
+
+
+        }
+
+const logout = () =>{
+    localStorage.clear();
+    window.location.href("index.html")
+}
+
+function mthodtoClick(id){
+    document.querySelectorAll(".option").forEach(p => p.classList.remove("active"))
+    document.getElementById(id).classList.add('active')
+}
+      
+    </script>
+    
+</body>
+</html>

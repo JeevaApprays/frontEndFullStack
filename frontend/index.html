@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TrainerHub — Admin Portal</title>
+  <meta name="description" content="Secure JWT-based Trainer Management Portal for administrators to manage trainers and users." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ===== LOGIN PAGE ===== -->
+  <div id="page-login" class="page active">
+    <div class="auth-bg">
+      <div class="auth-orb orb1"></div>
+      <div class="auth-orb orb2"></div>
+      <div class="auth-orb orb3"></div>
+    </div>
+    <div class="auth-card">
+      <div class="auth-logo">
+        <div class="logo-icon">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+            <circle cx="9" cy="7" r="4"/>
+            <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+            <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+          </svg>
+        </div>
+        <span class="logo-text">TrainerHub</span>
+      </div>
+      <h1 class="auth-title">Admin Login</h1>
+      <p class="auth-subtitle">Secure portal — JWT authenticated access</p>
+
+      <form id="login-form" class="auth-form" novalidate>
+        <div class="form-group">
+          <label for="login-email">Email Address</label>
+          <div class="input-wrapper">
+            <svg class="input-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+              <polyline points="22,6 12,13 2,6"/>
+            </svg>
+            <input type="email" id="login-email" placeholder="admin@example.com" required autocomplete="email" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="login-password">Password</label>
+          <div class="input-wrapper">
+            <svg class="input-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+              <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+            </svg>
+            <input type="password" id="login-password" placeholder="••••••••" required autocomplete="current-password" />
+            <button type="button" class="toggle-pw" id="toggle-password" aria-label="Toggle password visibility">
+              <svg id="eye-open" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                <circle cx="12" cy="12" r="3"/>
+              </svg>
+              <svg id="eye-closed" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none">
+                <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/>
+                <line x1="1" y1="1" x2="23" y2="23"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+        <div id="login-error" class="alert alert-error" style="display:none"></div>
+        <button type="submit" class="btn btn-primary btn-full" id="login-btn">
+          <span class="btn-text">Sign In</span>
+          <span class="btn-loader" style="display:none"></span>
+        </button>
+      </form>
+
+      <div class="auth-divider"><span>or</span></div>
+      <p class="auth-switch">Don't have an account? <a href="#" id="go-register">Register here</a></p>
+    </div>
+  </div>
+
+  <!-- ===== REGISTER PAGE ===== -->
+  <div id="page-register" class="page">
+    <div class="auth-bg">
+      <div class="auth-orb orb1"></div>
+      <div class="auth-orb orb2"></div>
+      <div class="auth-orb orb3"></div>
+    </div>
+    <div class="auth-card">
+      <div class="auth-logo">
+        <div class="logo-icon">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+            <circle cx="9" cy="7" r="4"/>
+            <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+            <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+          </svg>
+        </div>
+        <span class="logo-text">TrainerHub</span>
+      </div>
+      <h1 class="auth-title">Create Account</h1>
+      <p class="auth-subtitle">Register a new admin or user account</p>
+
+      <form id="register-form" class="auth-form" novalidate>
+        <div class="form-group">
+          <label for="reg-name">Full Name</label>
+          <div class="input-wrapper">
+            <svg class="input-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+              <circle cx="12" cy="7" r="4"/>
+            </svg>
+            <input type="text" id="reg-name" placeholder="John Doe" required />
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="reg-email">Email Address</label>
+          <div class="input-wrapper">
+            <svg class="input-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+              <polyline points="22,6 12,13 2,6"/>
+            </svg>
+            <input type="email" id="reg-email" placeholder="john@example.com" required />
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="reg-password">Password</label>
+          <div class="input-wrapper">
+            <svg class="input-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+              <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+            </svg>
+            <input type="password" id="reg-password" placeholder="••••••••" required />
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="reg-role">Role</label>
+          <div class="input-wrapper select-wrapper">
+            <svg class="input-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+            </svg>
+            <select id="reg-role">
+              <option value="ADMIN">ADMIN</option>
+              <option value="TRAINER">TRAINER</option>
+              <option value="STUDENT">STUDENT</option>
+            </select>
+          </div>
+        </div>
+        <div id="register-error" class="alert alert-error" style="display:none"></div>
+        <div id="register-success" class="alert alert-success" style="display:none"></div>
+        <button type="submit" class="btn btn-primary btn-full" id="register-btn">
+          <span class="btn-text">Create Account</span>
+          <span class="btn-loader" style="display:none"></span>
+        </button>
+      </form>
+
+      <div class="auth-divider"><span>or</span></div>
+      <p class="auth-switch">Already have an account? <a href="#" id="go-login">Sign in</a></p>
+    </div>
+  </div>
+
+  <!-- ===== DASHBOARD PAGE ===== -->
+  <div id="page-dashboard" class="page">
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <div class="auth-logo">
+          <div class="logo-icon small">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+              <circle cx="9" cy="7" r="4"/>
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+              <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+            </svg>
+          </div>
+          <span class="logo-text">TrainerHub</span>
+        </div>
+        <button class="sidebar-close" id="sidebar-close" aria-label="Close sidebar">✕</button>
+      </div>
+
+      <nav class="sidebar-nav">
+        <a href="#" class="nav-item active" id="nav-trainers" data-section="trainers">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+            <circle cx="9" cy="7" r="4"/>
+            <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+            <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+          </svg>
+          <span>Trainers</span>
+        </a>
+        <a href="#" class="nav-item" id="nav-add" data-section="add">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"/>
+            <line x1="12" y1="8" x2="12" y2="16"/>
+            <line x1="8" y1="12" x2="16" y2="12"/>
+          </svg>
+          <span>Add Trainer</span>
+        </a>
+        <a href="#" class="nav-item" id="nav-lookup" data-section="lookup">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8"/>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+          </svg>
+          <span>Lookup by ID</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="user-pill" id="user-pill">
+          <div class="user-avatar" id="user-avatar-initial">A</div>
+          <div class="user-info">
+            <span class="user-name" id="sidebar-username">Admin</span>
+            <span class="user-role">Administrator</span>
+          </div>
+        </div>
+        <button class="btn-logout" id="btn-logout" aria-label="Logout">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+            <polyline points="16 17 21 12 16 7"/>
+            <line x1="21" y1="12" x2="9" y2="12"/>
+          </svg>
+          Logout
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <header class="topbar">
+        <button class="hamburger" id="hamburger" aria-label="Open menu">
+          <span></span><span></span><span></span>
+        </button>
+        <div class="topbar-title" id="topbar-title">All Trainers</div>
+        <div class="topbar-actions">
+          <div class="jwt-badge" id="jwt-indicator" title="JWT Token Active">
+            <span class="jwt-dot"></span>
+            <span>JWT Active</span>
+          </div>
+        </div>
+      </header>
+
+      <!-- ---- SECTION: Trainers List ---- -->
+      <section id="section-trainers" class="content-section active">
+        <div class="section-header">
+          <div>
+            <h2 class="section-title">All Trainers</h2>
+            <p class="section-desc">Manage your trainer roster — view, edit, or remove records.</p>
+          </div>
+          <button class="btn btn-primary" id="btn-refresh-trainers">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="23 4 23 10 17 10"/>
+              <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/>
+            </svg>
+            Refresh
+          </button>
+        </div>
+
+        <div id="trainers-alert" class="alert" style="display:none"></div>
+
+        <div class="stats-row" id="stats-row">
+          <div class="stat-card">
+            <div class="stat-icon blue">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                <circle cx="9" cy="7" r="4"/>
+                <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+              </svg>
+            </div>
+            <div class="stat-info">
+              <span class="stat-value" id="stat-total">—</span>
+              <span class="stat-label">Total Trainers</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="search-bar">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8"/>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+          </svg>
+          <input type="text" id="search-input" placeholder="Search by name or email…" />
+        </div>
+
+        <div id="trainers-loading" class="loading-state">
+          <div class="spinner"></div>
+          <p>Loading trainers…</p>
+        </div>
+
+        <div id="trainers-empty" class="empty-state" style="display:none">
+          <div class="empty-icon">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+              <circle cx="9" cy="7" r="4"/>
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+              <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+            </svg>
+          </div>
+          <p>No trainers found</p>
+          <button class="btn btn-primary" onclick="showSection('add')">Add First Trainer</button>
+        </div>
+
+        <div class="table-wrapper" id="trainers-table-wrapper" style="display:none">
+          <table class="data-table" id="trainers-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Created At</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="trainers-tbody"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ---- SECTION: Add Trainer ---- -->
+      <section id="section-add" class="content-section">
+        <div class="section-header">
+          <div>
+            <h2 class="section-title">Add New Trainer</h2>
+            <p class="section-desc">Register a new trainer into the system.</p>
+          </div>
+        </div>
+        <div id="add-alert" class="alert" style="display:none"></div>
+        <div class="form-card">
+          <form id="add-trainer-form" novalidate>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="add-name">Trainer Name</label>
+                <div class="input-wrapper">
+                  <svg class="input-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                    <circle cx="12" cy="7" r="4"/>
+                  </svg>
+                  <input type="text" id="add-name" placeholder="e.g. Jane Smith" required />
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="add-email">Email Address</label>
+                <div class="input-wrapper">
+                  <svg class="input-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                    <polyline points="22,6 12,13 2,6"/>
+                  </svg>
+                  <input type="email" id="add-email" placeholder="trainer@example.com" required />
+                </div>
+              </div>
+            </div>
+            <div class="form-actions">
+              <button type="submit" class="btn btn-primary" id="add-trainer-btn">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="12" y1="5" x2="12" y2="19"/>
+                  <line x1="5" y1="12" x2="19" y2="12"/>
+                </svg>
+                <span class="btn-text">Add Trainer</span>
+                <span class="btn-loader" style="display:none"></span>
+              </button>
+            </div>
+          </form>
+        </div>
+      </section>
+
+      <!-- ---- SECTION: Lookup by ID ---- -->
+      <section id="section-lookup" class="content-section">
+        <div class="section-header">
+          <div>
+            <h2 class="section-title">Lookup Trainer by ID</h2>
+            <p class="section-desc">Find a specific trainer using their unique identifier.</p>
+          </div>
+        </div>
+        <div class="form-card compact">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="lookup-id">Trainer ID</label>
+              <div class="input-wrapper">
+                <svg class="input-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/>
+                  <line x1="7" y1="7" x2="7.01" y2="7"/>
+                </svg>
+                <input type="number" id="lookup-id" placeholder="Enter trainer ID…" min="1" />
+              </div>
+            </div>
+            <div class="form-actions" style="padding-top:8px;">
+              <button class="btn btn-primary" id="btn-lookup">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="11" cy="11" r="8"/>
+                  <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                </svg>
+                <span class="btn-text">Search</span>
+                <span class="btn-loader" style="display:none"></span>
+              </button>
+            </div>
+          </div>
+          <div id="lookup-alert" class="alert" style="display:none"></div>
+        </div>
+
+        <div id="lookup-result" class="trainer-profile-card" style="display:none">
+          <div class="profile-header">
+            <div class="profile-avatar" id="profile-avatar">?</div>
+            <div class="profile-info">
+              <h3 id="profile-name">—</h3>
+              <p id="profile-email">—</p>
+            </div>
+            <div class="profile-badge">Trainer</div>
+          </div>
+          <div class="profile-details">
+            <div class="detail-item">
+              <span class="detail-label">ID</span>
+              <span class="detail-value" id="profile-id">—</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">Created At</span>
+              <span class="detail-value" id="profile-created">—</span>
+            </div>
+          </div>
+          <div class="profile-actions">
+            <button class="btn btn-warning" id="profile-edit-btn">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+              </svg>
+              Edit
+            </button>
+            <button class="btn btn-danger" id="profile-delete-btn">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="3 6 5 6 21 6"/>
+                <path d="M19 6l-1 14H6L5 6"/>
+                <path d="M10 11v6"/>
+                <path d="M14 11v6"/>
+                <path d="M9 6V4h6v2"/>
+              </svg>
+              Delete
+            </button>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- ===== EDIT MODAL ===== -->
+  <div id="edit-modal" class="modal-overlay" style="display:none" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 id="modal-title">Edit Trainer</h3>
+        <button class="modal-close" id="modal-close" aria-label="Close modal">✕</button>
+      </div>
+      <form id="edit-form" novalidate>
+        <input type="hidden" id="edit-id" />
+        <div class="form-group">
+          <label for="edit-name">Trainer Name</label>
+          <div class="input-wrapper">
+            <svg class="input-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+              <circle cx="12" cy="7" r="4"/>
+            </svg>
+            <input type="text" id="edit-name" required />
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="edit-email">Email Address</label>
+          <div class="input-wrapper">
+            <svg class="input-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+              <polyline points="22,6 12,13 2,6"/>
+            </svg>
+            <input type="email" id="edit-email" required />
+          </div>
+        </div>
+        <div id="edit-alert" class="alert" style="display:none"></div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-ghost" id="modal-cancel">Cancel</button>
+          <button type="submit" class="btn btn-primary" id="edit-save-btn">
+            <span class="btn-text">Save Changes</span>
+            <span class="btn-loader" style="display:none"></span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ===== DELETE CONFIRM MODAL ===== -->
+  <div id="delete-modal" class="modal-overlay" style="display:none" role="dialog" aria-modal="true" aria-labelledby="delete-modal-title">
+    <div class="modal-card compact">
+      <div class="modal-header danger">
+        <div class="danger-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+            <line x1="12" y1="9" x2="12" y2="13"/>
+            <line x1="12" y1="17" x2="12.01" y2="17"/>
+          </svg>
+        </div>
+        <h3 id="delete-modal-title">Confirm Delete</h3>
+      </div>
+      <div class="modal-body">
+        <p>Are you sure you want to delete trainer <strong id="delete-name-display"></strong>? This action cannot be undone.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-ghost" id="delete-cancel">Cancel</button>
+        <button type="button" class="btn btn-danger" id="delete-confirm-btn">
+          <span class="btn-text">Delete</span>
+          <span class="btn-loader" style="display:none"></span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Container -->
+  <div id="toast-container" aria-live="polite"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
