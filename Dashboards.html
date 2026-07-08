@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Dashboard - Trainer Management</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f0f2f5;
+      min-height: 100vh;
+    }
+
+    /* ── NAVBAR ── */
+    .navbar {
+      background-color: #1a1a2e;
+      color: white;
+      padding: 12px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .navbar h2 {
+      font-size: 18px;
+    }
+
+    .navbar span {
+      font-size: 14px;
+      color: #aaa;
+    }
+
+    .logout-btn {
+      background-color: #e74c3c;
+      color: white;
+      border: none;
+      padding: 7px 16px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 13px;
+    }
+
+    .logout-btn:hover {
+      background-color: #c0392b;
+    }
+
+    /* ── MAIN LAYOUT ── */
+    .container {
+      max-width: 960px;
+      margin: 30px auto;
+      padding: 0 16px;
+    }
+
+    /* ── OPERATION BUTTONS ── */
+    .ops-section {
+      background: white;
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 24px;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .ops-section h3 {
+      margin-bottom: 14px;
+      font-size: 15px;
+      color: #333;
+      border-bottom: 1px solid #eee;
+      padding-bottom: 8px;
+    }
+
+    .btn-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .op-btn {
+      padding: 9px 20px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: bold;
+      color: #333;
+      background-color: transparent;
+      transition: background-color 0.2s;
+    }
+
+    .op-btn:hover {
+      background-color: #f0f0f0;
+    }
+
+    .btn-post {}
+
+    .btn-get {}
+
+    .btn-getid {}
+
+    .btn-put {}
+
+    .btn-delete {}
+
+    /* ── ACTIVE PANEL ── */
+    .panel {
+      background: white;
+      border-radius: 8px;
+      padding: 22px;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+      display: none;
+    }
+
+    .panel.active {
+      display: block;
+    }
+
+    .panel h3 {
+      font-size: 15px;
+      margin-bottom: 16px;
+      color: #333;
+      border-bottom: 1px solid #eee;
+      padding-bottom: 8px;
+    }
+
+    /* ── FORM FIELDS ── */
+    .form-group {
+      margin-bottom: 12px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 13px;
+      color: #555;
+      margin-bottom: 4px;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 8px 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+
+    .form-group input:focus {
+      outline: none;
+      border-color: #2980b9;
+    }
+
+    .submit-btn {
+      padding: 9px 22px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 14px;
+      color: white;
+      background-color: #2980b9;
+      margin-top: 4px;
+    }
+
+    .submit-btn:hover {
+      background-color: #1f618d;
+    }
+
+    /* ── RESPONSE AREA ── */
+    .response-box {
+      margin-top: 18px;
+      background-color: #f8f9fa;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      padding: 14px;
+      font-size: 13px;
+      color: #333;
+      display: none;
+    }
+
+    .response-box.show {
+      display: block;
+    }
+
+    .response-box.success {
+      border-left: 4px solid #27ae60;
+    }
+
+    .response-box.error {
+      border-left: 4px solid #e74c3c;
+      color: #c0392b;
+    }
+
+    /* ── TABLE ── */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      margin-top: 10px;
+    }
+
+    th {
+      background-color: #1a1a2e;
+      color: white;
+      padding: 9px 12px;
+      text-align: left;
+    }
+
+    td {
+      padding: 8px 12px;
+      border-bottom: 1px solid #eee;
+    }
+
+    tr:hover td {
+      background-color: #f5f5f5;
+    }
+
+    .badge {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: bold;
+      padding: 2px 8px;
+      border-radius: 10px;
+      color: white;
+    }
+
+    .badge-post {
+      background-color: #27ae60;
+    }
+
+    .badge-get {
+      background-color: #2980b9;
+    }
+
+    .badge-put {
+      background-color: #e67e22;
+    }
+
+    .badge-delete {
+      background-color: #e74c3c;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- NAVBAR -->
+  <div class="navbar">
+    <h2>Dashboard</h2>
+    <span id="nav-email">Logged in as: —</span>
+    <button class="logout-btn" onclick="logout()">Logout</button>
+  </div>
+
+  <div class="container">
+
+    <!-- OPERATION BUTTONS -->
+    <div class="ops-section">
+      <h3>Trainer Operations</h3>
+      <div class="btn-row">
+        <button class="op-btn btn-post" onclick="showPanel('panel-add')">Add Trainer</button>
+        <button class="op-btn btn-get" onclick="showPanel('panel-getall')">Get All Trainers</button>
+        <button class="op-btn btn-getid" onclick="showPanel('panel-getbyid')">Get Trainer by ID</button>
+        <button class="op-btn btn-put" onclick="showPanel('panel-update')">Update Trainer</button>
+        <button class="op-btn btn-delete" onclick="showPanel('panel-delete')">Delete Trainer</button>
+      </div>
+    </div>
+
+    <!-- PANEL: ADD TRAINER (POST) -->
+    <div class="panel" id="panel-add">
+      <h3>Add New Trainer</h3>
+      <div class="form-group">
+        <label>Name</label>
+        <input type="text" id="add-name" placeholder="Trainer name" />
+      </div>
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" id="add-email" placeholder="trainer@example.com" />
+      </div>
+      <button class="submit-btn" onclick="addTrainer()">Add Trainer</button>
+      <div class="response-box" id="res-add"></div>
+    </div>
+
+    <!-- PANEL: GET ALL TRAINERS (GET) -->
+    <div class="panel" id="panel-getall">
+      <h3>All Trainers</h3>
+      <button class="submit-btn" onclick="fetchAllTrainers()">Fetch All Trainers</button>
+      <div class="response-box" id="res-getall"></div>
+    </div>
+
+    <!-- PANEL: GET BY ID (GET) -->
+    <div class="panel" id="panel-getbyid">
+      <h3>Get Trainer by ID</h3>
+      <div class="form-group">
+        <label>Trainer ID</label>
+        <input type="number" id="getid-id" placeholder="e.g. 1" />
+      </div>
+      <button class="submit-btn" onclick="fetchById()">Fetch Trainer</button>
+      <div class="response-box" id="res-getbyid"></div>
+    </div>
+
+    <!-- PANEL: UPDATE TRAINER (PUT) -->
+    <div class="panel" id="panel-update">
+      <h3>Update Trainer</h3>
+      <div class="form-group">
+        <label>Trainer ID</label>
+        <input type="number" id="upd-id" placeholder="e.g. 1" />
+      </div>
+      <div class="form-group">
+        <label>New Name</label>
+        <input type="text" id="upd-name" placeholder="Updated name" />
+      </div>
+      <div class="form-group">
+        <label>New Email</label>
+        <input type="email" id="upd-email" placeholder="Updated email" />
+      </div>
+      <button class="submit-btn" onclick="updateTrainer()">Update Trainer</button>
+      <div class="response-box" id="res-update"></div>
+    </div>
+
+    <!-- PANEL: DELETE TRAINER (DELETE) -->
+    <div class="panel" id="panel-delete">
+      <h3>Delete Trainer</h3>
+      <div class="form-group">
+        <label>Trainer ID</label>
+        <input type="number" id="del-id" placeholder="e.g. 1" />
+      </div>
+      <button class="submit-btn" style="background-color:#e74c3c;" onclick="confirmDelete()">Delete Trainer</button>
+      <div id="delete-confirm-box"
+        style="display:none; margin-top:12px; padding:12px; background:#fff3cd; border:1px solid #e74c3c; border-radius:5px;">
+        <strong style="color:#e74c3c;">Are you sure?</strong> This will permanently delete the trainer.
+        &nbsp;&nbsp;
+        <button onclick="doDelete()"
+          style="background:#e74c3c;color:white;border:none;padding:6px 16px;border-radius:4px;cursor:pointer;font-weight:bold;">Yes,
+          Delete</button>
+        &nbsp;
+        <button onclick="cancelDelete()"
+          style="background:#888;color:white;border:none;padding:6px 16px;border-radius:4px;cursor:pointer;">Cancel</button>
+      </div>
+      <div class="response-box" id="res-delete"></div>
+    </div>
+
+  </div><!-- /container -->
+
+  <script>
+    const API = 'http://localhost:8080';
+
+    // ── Auth guard ──
+    const token = localStorage.getItem('jwt_token');
+    const email = localStorage.getItem('user_email');
+
+    if (!token) {
+      window.location.href = 'login.html';
+    } else {
+      document.getElementById('nav-email').textContent = 'Logged in as: ' + (email || '—');
+    }
+
+    function logout() {
+      localStorage.removeItem('jwt_token');
+      localStorage.removeItem('user_email');
+      window.location.href = 'login.html';
+    }
+
+    // ── Panel switcher ──
+    function showPanel(id) {
+      document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+    }
+
+    // JWT sent on every request via Authorization: Bearer <token>
+    function authHeaders(extra) {
+      return Object.assign({ 'Authorization': 'Bearer ' + token }, extra || {});
+    }
+
+    function showResponse(boxId, content, isError) {
+      const box = document.getElementById(boxId);
+      box.className = 'response-box show ' + (isError ? 'error' : 'success');
+      box.innerHTML = content;
+    }
+
+    // Central handler: 401 = not logged in, 403 = Access Denied (not ADMIN)
+    async function handleApiError(res, boxId) {
+      if (res.status === 401) {
+        alert('Session expired or not logged in. Redirecting to login...');
+        localStorage.removeItem('jwt_token');
+        localStorage.removeItem('user_email');
+        window.location.href = 'login.html';
+        return true;
+      }
+      if (res.status === 403) {
+        alert('Access Denied!\n\nThis action requires ADMIN role.\nYou do not have permission to perform this operation.');
+        showResponse(boxId, '<strong>Access Denied</strong> - Admin role required for this operation.', true);
+        return true;
+      }
+      return false;
+    }
+
+    // ── Build a simple trainer card ──
+    function trainerCard(t) {
+      return `<strong>ID:</strong> ${t.id} &nbsp;|&nbsp;
+              <strong>Name:</strong> ${t.name} &nbsp;|&nbsp;
+              <strong>Email:</strong> ${t.email} &nbsp;|&nbsp;
+              <strong>Created:</strong> ${t.createdAt ? t.createdAt.replace('T', ' ').substring(0, 19) : '—'}`;
+    }
+
+    // ── Build table from array ──
+    function buildTable(trainers) {
+      if (!trainers || trainers.length === 0) return '<em>No trainers found.</em>';
+      let rows = trainers.map(t => `
+        <tr>
+          <td>${t.id}</td>
+          <td>${t.name}</td>
+          <td>${t.email}</td>
+          <td>${t.createdAt ? t.createdAt.replace('T', ' ').substring(0, 19) : '—'}</td>
+        </tr>`).join('');
+      return `<table>
+        <thead><tr><th>ID</th><th>Name</th><th>Email</th><th>Created At</th></tr></thead>
+        <tbody>${rows}</tbody>
+      </table>`;
+    }
+
+    // ──────────────────────────────────────────
+    // POST — Add Trainer
+    // ──────────────────────────────────────────
+    async function addTrainer() {
+      const name = document.getElementById('add-name').value.trim();
+      const email = document.getElementById('add-email').value.trim();
+
+      if (!name || !email) {
+        showResponse('res-add', '⚠️ Please fill in both name and email.', true);
+        return;
+      }
+
+      try {
+        const res = await fetch(API + '/addTrainer', {
+          method: 'POST',
+          headers: authHeaders({ 'Content-Type': 'application/json' }),
+          body: JSON.stringify({ name, email })
+        });
+
+        if (await handleApiError(res, 'res-add')) return;
+
+        const data = await res.json();
+        if (!res.ok) {
+          showResponse('res-add', 'Error: ' + (data.message || res.statusText), true);
+          return;
+        }
+
+        showResponse('res-add', 'Trainer added successfully!<br><br>' + trainerCard(data), false);
+        document.getElementById('add-name').value = '';
+        document.getElementById('add-email').value = '';
+
+      } catch (e) {
+        showResponse('res-add', 'Cannot connect to server. Make sure backend is running on port 8080.', true);
+      }
+    }
+
+    // ──────────────────────────────────────────
+    // GET — Fetch All Trainers
+    // ──────────────────────────────────────────
+    async function fetchAllTrainers() {
+      const box = document.getElementById('res-getall');
+      box.className = 'response-box show success';
+      box.innerHTML = 'Loading…';
+
+      try {
+        const res = await fetch(API + '/admin/fetchAllTrainers', {
+          headers: authHeaders()
+        });
+
+        if (await handleApiError(res, 'res-getall')) return;
+
+        if (!res.ok) {
+          const d = await res.json().catch(() => ({}));
+          showResponse('res-getall', 'Error: ' + (d.message || res.statusText), true);
+          return;
+        }
+
+        const data = await res.json();
+        showResponse('res-getall', buildTable(data), false);
+
+      } catch (e) {
+        showResponse('res-getall', 'Cannot connect to server. Make sure backend is running on port 8080.', true);
+      }
+    }
+
+    // ──────────────────────────────────────────
+    // GET — Fetch By ID
+    // ──────────────────────────────────────────
+    async function fetchById() {
+      const id = document.getElementById('getid-id').value.trim();
+
+      if (!id) {
+        showResponse('res-getbyid', '⚠️ Please enter a Trainer ID.', true);
+        return;
+      }
+
+      try {
+        const res = await fetch(API + '/trainer/' + id, {
+          headers: authHeaders()
+        });
+
+        if (await handleApiError(res, 'res-getbyid')) return;
+
+        if (!res.ok) {
+          const data = await res.json().catch(() => ({}));
+          showResponse('res-getbyid', 'Error: ' + (data.message || res.statusText), true);
+          return;
+        }
+
+        const data = await res.json();
+        showResponse('res-getbyid', 'Trainer found:<br><br>' + trainerCard(data), false);
+
+      } catch (e) {
+        showResponse('res-getbyid', 'Cannot connect to server. Make sure backend is running on port 8080.', true);
+      }
+    }
+
+    // ──────────────────────────────────────────
+    // PUT — Update Trainer
+    // ──────────────────────────────────────────
+    async function updateTrainer() {
+      const id = document.getElementById('upd-id').value.trim();
+      const name = document.getElementById('upd-name').value.trim();
+      const email = document.getElementById('upd-email').value.trim();
+
+      if (!id) {
+        showResponse('res-update', '⚠️ Please enter a Trainer ID.', true);
+        return;
+      }
+
+      try {
+        const res = await fetch(API + '/update/' + id, {
+          method: 'PUT',
+          headers: authHeaders({ 'Content-Type': 'application/json' }),
+          body: JSON.stringify({ name, email })
+        });
+
+        if (await handleApiError(res, 'res-update')) return;
+
+        if (!res.ok) {
+          const data = await res.json().catch(() => ({}));
+          showResponse('res-update', 'Error: ' + (data.message || res.statusText), true);
+          return;
+        }
+
+        const msg = await res.text();
+        showResponse('res-update', 'Updated: ' + msg, false);
+
+      } catch (e) {
+        showResponse('res-update', 'Cannot connect to server. Make sure backend is running on port 8080.', true);
+      }
+    }
+
+    // ──────────────────────────────────────────
+    // DELETE — Delete Trainer
+    // ──────────────────────────────────────────
+    function confirmDelete() {
+      const id = document.getElementById('del-id').value.trim();
+      if (!id) {
+        showResponse('res-delete', '⚠️ Please enter a Trainer ID first.', true);
+        return;
+      }
+      document.getElementById('delete-confirm-box').style.display = 'block';
+    }
+
+    function cancelDelete() {
+      document.getElementById('delete-confirm-box').style.display = 'none';
+    }
+
+    async function doDelete() {
+      document.getElementById('delete-confirm-box').style.display = 'none';
+      const id = document.getElementById('del-id').value.trim();
+
+      if (!id) {
+        showResponse('res-delete', '⚠️ Please enter a Trainer ID.', true);
+        return;
+      }
+
+      showResponse('res-delete', 'Deleting...', false);
+
+      try {
+        const res = await fetch(API + '/deleteTrainer/' + id, {
+          method: 'DELETE',
+          headers: authHeaders()
+        });
+
+        if (await handleApiError(res, 'res-delete')) return;
+
+        if (!res.ok) {
+          const txt = await res.text().catch(() => res.statusText);
+          showResponse('res-delete', 'Error ' + res.status + ': ' + txt, true);
+          return;
+        }
+
+        const msg = await res.text();
+        showResponse('res-delete', '✅ ' + msg, false);
+        document.getElementById('del-id').value = '';
+
+      } catch (e) {
+        showResponse('res-delete', 'Cannot connect to server. Make sure backend is running on port 8080.<br>Detail: ' + e.message, true);
+      }
+    }
+  </script>
+
+</body>
+
+</html>
